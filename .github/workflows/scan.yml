@@ -1,0 +1,43 @@
+name: Job scan
+
+on:
+  schedule:
+    # 07:00, 12:00, 17:00 and 21:00 UTC every day
+    - cron: "0 7,12,17,21 * * *"
+  workflow_dispatch: # adds a "Run workflow" button in the Actions tab
+
+permissions:
+  contents: write # needed to commit data/seen_jobs.json
+
+concurrency:
+  group: job-scan
+  cancel-in-progress: false
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - run: pip install -r requirements.txt
+
+      - name: Run job bot
+        run: python -m jobbot
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          ADZUNA_APP_ID: ${{ secrets.ADZUNA_APP_ID }}
+          ADZUNA_APP_KEY: ${{ secrets.ADZUNA_APP_KEY }}
+          REED_API_KEY: ${{ secrets.REED_API_KEY }}
+          SERPAPI_KEY: ${{ secrets.SERPAPI_KEY }}
+
+      - name: Save seen jobs
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/seen_jobs.json
+          git diff --staged --quiet || (git commit -m "chore: update seen jobs" && git push)

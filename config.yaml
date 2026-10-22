@@ -1,0 +1,148 @@
+# Job bot configuration. Edit freely - no code changes needed.
+
+location:
+  # A job is kept if its location contains any of these (case-insensitive).
+  # Aggregator APIs (Adzuna, Reed) are already searched around London.
+  keywords: ["london", "remote (uk)", "uk remote", "remote - uk", "united kingdom"]
+
+filters:
+  # Title must contain at least one early-career term...
+  early_career:
+    - graduate
+    - grad
+    - intern
+    - internship
+    - summer analyst
+    - junior
+    - entry level
+    - entry-level
+    - early career
+    - early careers
+    - new grad
+    - "2027"
+    - apprentice
+  # ...AND at least one tech term...
+  tech:
+    - software
+    - developer
+    - engineer
+    - engineering
+    - programmer
+    - full stack
+    - full-stack
+    - frontend
+    - front-end
+    - backend
+    - back-end
+    - web
+    - mobile
+    - ios
+    - android
+    - data
+    - machine learning
+    - ml
+    - ai
+    - analytics
+    - quant
+    - cyber
+    - security
+    - cloud
+    - devops
+    - sre
+    - site reliability
+    - infrastructure
+    - platform
+    - it
+    - technology
+    - tech
+    - technical
+    - systems
+    - network
+    - product manager
+    - product management
+    - project manager
+    - consultant
+    - consulting
+  # ...AND none of these.
+  exclude:
+    - senior
+    - sr
+    - lead
+    - principal
+    - staff
+    - head of
+    - director
+    - vp
+    - manager ii
+    - placement
+    - year in industry
+    - industrial
+    - sandwich
+    - phd
+    - phds
+    - sales
+    - account executive
+    - recruiter
+    - mechanical
+    - civil
+    - electrical
+
+notifications:
+  # Cap per run so the first run doesn't flood Discord.
+  # Anything over the cap stays "unseen" and goes out next run.
+  max_alerts_per_run: 40
+
+storage:
+  seen_file: data/seen_jobs.json
+  # Forget jobs after this many days (keeps the file small).
+  keep_days: 60
+
+sources:
+  adzuna:
+    enabled: true
+    max_days_old: 7
+    queries:
+      - graduate software engineer
+      - graduate developer
+      - software engineer intern
+      - junior software developer
+      - graduate data analyst
+      - data science intern
+      - graduate cyber security
+      - graduate cloud engineer
+      - graduate technology consultant
+      - IT graduate scheme
+
+  reed:
+    enabled: true
+    distance_miles: 15
+    queries:
+      - software engineer
+      - developer
+      - data
+      - cyber security
+      - cloud devops
+      - IT technology
+      - intern software
+      - junior developer
+
+  google_jobs:
+    # Uses SerpAPI (free tier = 100 searches/month), so it only runs
+    # at the UTC hours listed below to stay within the quota.
+    enabled: true
+    run_hours_utc: [7]
+    queries:
+      - graduate software engineer london
+      - tech internship london 2027
+
+  greenhouse:
+    enabled: true
+    boards: [monzo, gocardless, datadog, stripe, deliveroo, intercom, wehrtyou, imc, mongodb, elastic, databricks, figma]
+
+  lever:
+    enabled: true
+    boards: [palantir, spotify, octoenergy, zopa]
+
+  ashby:
+    enabled: true
+    boards: [wayve, synthesia, elevenlabs, cohere, openai, ramp, paddle, snyk, faculty, multiverse, perplexity, cursor]
